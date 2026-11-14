@@ -1,0 +1,7 @@
+{
+  "appId": "com.mixupear.app",
+  "appName": "Mix up-ear",
+  "webDir": "www",
+  "backgroundColor": "#0b0c10",
+  "android": { "allowMixedContent": false }
+}
