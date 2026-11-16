@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0a0d14">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Mix up-ear</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6" y="5" width="4.2" height="14" rx="1.2"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.2"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="M6 6.2v11.6a.9.9 0 0 0 1.4.75l8.2-5.8a.9.9 0 0 0 0-1.5L7.4 5.45A.9.9 0 0 0 6 6.2z"/><rect x="16.6" y="5.5" width="2.4" height="13" rx="1.1"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 24 24"><path d="M18 6.2v11.6a.9.9 0 0 1-1.4.75l-8.2-5.8a.9.9 0 0 1 0-1.5l8.2-5.8A.9.9 0 0 1 18 6.2z"/><rect x="5" y="5.5" width="2.4" height="13" rx="1.1"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6.5" y="6.5" width="11" height="11" rx="2"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3.5 7.5a2 2 0 0 1 2-2h4l2 2.2h7a2 2 0 0 1 2 2v7.3a2 2 0 0 1-2 2h-13a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3A4 4 0 0 0 11 18.7l1-1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></g></symbol>
+  <symbol id="i-eq" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 4v16M12 4v16M18 4v16"/></g><g fill="currentColor"><circle cx="6" cy="14" r="2.2"/><circle cx="12" cy="8" r="2.2"/><circle cx="18" cy="12" r="2.2"/></g></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></symbol>
+  <symbol id="i-video" viewBox="0 0 24 24"><rect x="3" y="6.5" width="12.5" height="11" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15.5 10.5l5-2.6v8.2l-5-2.6z" fill="currentColor"/></symbol>
+</svg>
+
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="dot a"></span><span class="dot b"></span><b>MIX UP-EAR</b></div>
+    <div class="top-btns">
+      <button class="icon-btn" id="btnEq" aria-label="Ecualizador"><svg><use href="#i-eq"/></svg></button>
+      <button class="icon-btn" id="btnSettings" aria-label="Ajustes"><svg><use href="#i-gear"/></svg></button>
+    </div>
+  </header>
+
+  <section class="stage" id="stage" data-view="disc">
+    <div class="backdrop" id="backdrop"></div>
+    <canvas id="viz"></canvas>
+    <div class="videos" id="videos"></div>
+    <div class="platter-wrap" id="platterWrap" aria-label="Tocadiscos: arrastra para hacer scratch, mantén para frenar">
+      <div class="platter" id="platter">
+        <div class="ticks"></div>
+        <div class="label"><i id="artA"></i><i id="artB"></i><span class="notch"></span></div>
+        <span class="spindle"></span>
+      </div>
+      <div class="sheen"></div>
+    </div>
+    <div class="view-toggle" role="group" aria-label="Vista">
+      <button data-view="disc" class="on">Disco</button><button data-view="video">Video</button>
+    </div>
+    <div class="stage-info">
+      <div class="np-label" id="npLabel">Sin reproducción</div>
+      <div class="np-title" id="npTitle">Agrega música para empezar</div>
+      <div class="np-sub" id="npSub"></div>
+    </div>
+  </section>
+
+  <section class="decks">
+    <div class="deck" id="deckA">
+      <div class="deck-head"><span class="chip-deck a">A</span><span class="deck-bpm" id="bpmA">— BPM</span></div>
+      <div class="deck-body"><i class="deck-art" id="dartA"></i><div class="deck-name" id="nameA">—</div></div>
+    </div>
+    <div class="xfader" aria-hidden="true">
+      <div class="xf-track"><div class="xf-fill"></div><div class="xf-knob" id="xfKnob"></div></div>
+      <div class="xf-label" id="xfLabel">&nbsp;</div>
+    </div>
+    <div class="deck" id="deckB">
+      <div class="deck-head"><span class="chip-deck b">B</span><span class="deck-bpm" id="bpmB">— BPM</span></div>
+      <div class="deck-body"><i class="deck-art" id="dartB"></i><div class="deck-name" id="nameB">—</div></div>
+    </div>
+  </section>
+
+  <section class="transport">
+    <div class="progress" id="progress"><div class="progress-fill" id="progressFill"></div><div class="cut-mark" id="cutMark" hidden></div></div>
+    <div class="times"><span id="tCur">0:00</span><span id="tTot">0:00</span></div>
+    <div class="controls">
+      <button class="ctl" id="btnPrev" aria-label="Anterior"><svg><use href="#i-prev"/></svg></button>
+      <button class="ctl big" id="btnPlay" aria-label="Reproducir"><svg id="playIcon"><use href="#i-play"/></svg></button>
+      <button class="ctl" id="btnNext" aria-label="Mezclar a la siguiente"><svg><use href="#i-next"/></svg></button>
+    </div>
+    <div class="hint" id="hint">Agrega una carpeta o archivos</div>
+  </section>
+
+  <section class="settings" id="settings" hidden>
+    <label class="row">
+      <span>Duración de la mezcla <b id="mixVal">12 s</b></span>
+      <input type="range" id="mixLen" min="3" max="32" step="1" value="12">
+    </label>
+    <label class="row sw"><span>Cambiar a tiempo fijo</span><input type="checkbox" id="optCut"></label>
+    <label class="row" id="cutRow" hidden>
+      <span>Cada pista empieza a mezclar en el minuto <b id="cutVal">2:30</b></span>
+      <input type="range" id="cutLen" min="30" max="600" step="5" value="150">
+    </label>
+    <label class="row sw"><span>Igualar tempo (beatmatch)</span><input type="checkbox" id="optSync" checked></label>
+    <label class="row sw"><span>Intercambio de graves (bass swap)</span><input type="checkbox" id="optBass" checked></label>
+    <label class="row sw"><span>Repetir lista al terminar</span><input type="checkbox" id="optLoop"></label>
+  </section>
+
+  <section class="queue">
+    <div class="queue-head">
+      <h2>Lista <span id="qCount" class="count">0</span></h2>
+      <select id="sortMode" aria-label="Ordenar">
+        <option value="list">Orden de la lista</option>
+        <option value="shuffle">Aleatorio</option>
+        <option value="bpm-asc">BPM ↑ (sube energía)</option>
+        <option value="bpm-desc">BPM ↓</option>
+      </select>
+    </div>
+    <div class="add-row">
+      <button class="btn" id="btnFiles"><svg><use href="#i-file"/></svg> Archivos</button>
+      <button class="btn" id="btnFolder"><svg><use href="#i-folder"/></svg> Carpeta</button>
+      <button class="btn" id="btnOnline"><svg><use href="#i-link"/></svg> YouTube / Spotify</button>
+      <button class="btn ghost" id="btnClear">Vaciar</button>
+    </div>
+    <ul class="list" id="list"></ul>
+    <div class="empty" id="empty">
+      <p><b>1.</b> Toca <b>Carpeta</b> o <b>Archivos</b>, o importa una lista de <b>YouTube / Spotify</b>.</p>
+      <p><b>2.</b> Se leen las carátulas y se analiza el BPM de cada pista.</p>
+      <p><b>3.</b> Toca <b>Play</b>: se mezcla sola. Gira el disco para hacer scratch.</p>
+    </div>
+  </section>
+</div>
+
+<div class="sheet" id="eqSheet" hidden>
+  <div class="sheet-card">
+    <div class="sheet-head"><h3>Ecualizador</h3><button class="icon-btn" data-close aria-label="Cerrar"><svg><use href="#i-x"/></svg></button></div>
+    <div class="presets" id="eqPresets"></div>
+    <div class="eq-bands" id="eqBands"></div>
+    <p class="fine">Se aplica a la música local. Las pistas de YouTube/Spotify suenan por el reproductor de YouTube y no pasan por el ecualizador.</p>
+  </div>
+</div>
+
+<div class="sheet" id="onlineSheet" hidden>
+  <div class="sheet-card">
+    <div class="sheet-head"><h3>Listas de YouTube y Spotify</h3><button class="icon-btn" data-close aria-label="Cerrar"><svg><use href="#i-x"/></svg></button></div>
+    <p class="sheet-note">Pega uno o varios enlaces (lista, álbum, video o canción), uno por línea. También puedes escribir nombres de canciones: <i>artista - título</i>.</p>
+    <textarea id="onlineText" rows="5" placeholder="https://www.youtube.com/playlist?list=…&#10;https://open.spotify.com/playlist/…&#10;Bad Bunny - Tití Me Preguntó"></textarea>
+    <div class="sheet-actions"><button class="btn" id="btnPasteClip">Pegar</button><button class="btn primary" id="btnImport">Importar</button></div>
+    <div class="import-status" id="importStatus" role="status"></div>
+    <p class="fine">Spotify se lee de la lista pública y cada canción suena con su equivalente en YouTube (sin cuenta ni Premium). Las pistas en línea se mezclan con crossfade; no tienen BPM, scratch ni ecualizador.</p>
+  </div>
+</div>
+
+<input type="file" id="inFiles" accept="audio/*,video/*,.mp3,.m4a,.aac,.wav,.flac,.ogg,.opus,.mp4,.webm,.mkv,.mov" multiple hidden>
+<input type="file" id="inFolder" webkitdirectory directory multiple hidden>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="bpm.js"></script>
+<script src="tags.js"></script>
+<script src="online.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
